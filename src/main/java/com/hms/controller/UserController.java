@@ -5,6 +5,7 @@ import com.hms.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -33,6 +34,9 @@ public class UserController {
         if (opEmail.isPresent()){
             return new ResponseEntity<>("User already present with this email id: "+ user.getEmail(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        String encryptedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(5));
+        user.setPassword(encryptedPassword);
+
 
         AppUser save = userRepository.save(user);
 
